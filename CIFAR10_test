@@ -1,0 +1,19 @@
+def test(model, loader):
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data in loader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f"Test Accuracy: {100 * correct / total:.2f}%")
+
+
+for epoch in range(5): 
+    train(alexnet, train_loader_cifar, criterion, optimizer, epoch)
+    test(alexnet, test_loader_cifar)
