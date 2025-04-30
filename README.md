@@ -59,14 +59,14 @@ Görüntü sınıflandırma, bilgisayarla görme alanının temel problemlerinde
 - Tüm modeller `Adam` optimizer ve `CrossEntropyLoss` ile eğitildi (10 epoch).
 - `ImprovedLeNet5_epoch` ve `mnist_loader_and_plot` dosyaları eğitim süreci görselleştirmeleri içindir.
 
-### Doğruluk Değerleri
 
-| Model                  | Test Doğruluğu (%) |
-|------------------------|--------------------|
-| LeNet5                 | 98.10              |
-| ImprovedLeNet5         | 98.87              |
-| CIFAR10_VGG16_Full     | 86.45              |
-| CIFAR10_VGG16 + SVM    | 83.27              |
+## Sonuçlar
+
+- **Model 1: LeNet-5**'in doğruluğu %96.93 olarak ölçülmüştür.
+- **Model 2: ImprovedLeNet5**'in doğruluğu %98.09'a çıkmıştır.
+- **Model 3: CIFAR10_VGG16_Full**'in doğruluğu %87.58 ile daha düşük kalmıştır.
+- **Model 4: CIFAR10_VGG16 + SVM**'in doğruluğu %98.83 olmuştur.
+- **Model 5: CIFAR10_VGG16 + Diğer (KNN / Random Forest)** ise %98.89 ile en yüksek doğruluğu sağlamıştır.
 
 ---
 
