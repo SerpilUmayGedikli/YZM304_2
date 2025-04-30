@@ -1,0 +1,14 @@
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+train_features = np.load("train_features.npy")
+train_labels = np.load("train_labels.npy")
+test_features = np.load("test_features.npy")
+test_labels = np.load("test_labels.npy")
+
+svm_model = SVC(kernel='linear')
+svm_model.fit(train_features, train_labels)
+
+predictions = svm_model.predict(test_features)
+accuracy = accuracy_score(test_labels, predictions)
+print(f"SVM Test Doğruluğu: {accuracy * 100:.2f}%")
