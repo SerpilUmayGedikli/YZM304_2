@@ -39,3 +39,6 @@ def test(model, test_loader):
             total += targets.size(0)
             correct += (predicted == targets).sum().item()
     print(f"Test Accuracy: {100 * correct / total:.2f}%")
+for epoch in range(5): 
+    train(model, train_loader, criterion, optimizer, epoch)
+    test(model, test_loader)
