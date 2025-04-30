@@ -1,19 +1,16 @@
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.0001)
-
-def train_model(model, epochs=5):
+def train(model, loader, criterion, optimizer, epoch):
     model.train()
-    for epoch in range(epochs):
-        running_loss = 0.0
-        for i, (inputs, labels) in enumerate(trainloader, 0):
-            inputs, labels = inputs.to(device), labels.to(device)
+    running_loss = 0.0
+    for i, (inputs, labels) in enumerate(loader, 0):
+        inputs, labels = inputs.to(device), labels.to(device)
+        optimizer.zero_grad()
 
-            optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
 
-            if i % 100 == 99:
-                print(f"[{epoch + 1}, {i + 1}] loss: {loss.item():.3f}")
-    print("Training complete.")
+        running_loss += loss.item()
+        if i % 100 == 99: 
+            print(f"[{epoch + 1}, {i + 1}] loss: {running_loss / 100:.3f}")
+            running_loss = 0.0
