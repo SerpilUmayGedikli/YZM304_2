@@ -2,7 +2,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
-from ImprovedLeNet5 import ImprovedLeNet5  # ImprovedLeNet5 modelini import ettik
+from ImprovedLeNet5 import ImprovedLeNet5 
 
 transform = transforms.Compose([
     transforms.ToTensor(),
