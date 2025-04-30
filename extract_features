@@ -1,0 +1,52 @@
+import numpy as np
+import torch
+import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
+from torchvision import models
+from torch.utils.data import DataLoader
+
+# CIFAR-10 için işlem
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
+])
+
+batch_size = 64
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+test_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+vgg_model = models.vgg16(pretrained=True).features.to(device)
+vgg_model.eval()
+
+def extract_features(dataloader, model, max_batches=None):
+    features = []
+    labels = []
+
+    with torch.no_grad():
+        for i, (images, targets) in enumerate(dataloader):
+            images = images.to(device)
+            output = model(images)
+            output = torch.flatten(output, start_dim=1)
+            features.append(output.cpu().numpy())
+            labels.append(targets.numpy())
+            if max_batches and i >= max_batches:
+                break
+
+    features = np.concatenate(features, axis=0)
+    labels = np.concatenate(labels, axis=0)
+    return features, labels
+
+train_features, train_labels = extract_features(train_loader, vgg_model)
+test_features, test_labels = extract_features(test_loader, vgg_model)
+
+np.save("train_features.npy", train_features)
+np.save("train_labels.npy", train_labels)
+np.save("test_features.npy", test_features)
+np.save("test_labels.npy", test_labels)
