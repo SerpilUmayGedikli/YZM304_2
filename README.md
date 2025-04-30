@@ -1,4 +1,4 @@
-# YZM304 II. Ödev - Derin Öğrenme ile MNIST Veri Seti Sınıflandırma
+# YZM304 2. Ödev - Derin Öğrenme ile MNIST Veri Seti Sınıflandırma
 
 ## Giriş
 
