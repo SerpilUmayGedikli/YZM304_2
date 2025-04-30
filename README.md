@@ -40,7 +40,7 @@ Görüntü sınıflandırma, bilgisayarla görme alanının temel problemlerinde
 | 2        | `ImprovedLeNet5`          | MNIST     | Batch Normalization ve Dropout içeren CNN |
 | 3        | `CIFAR10_VGG16_Full`      | CIFAR10   | Transfer learning ile uçtan uca eğitilen VGG16 |
 | 4        | `CIFAR10_VGG16` + `SVM`   | CIFAR10   | VGG16 ile çıkarılan özelliklerle SVM sınıflandırma |
-| 5        | `CIFAR10_VGG16` + diğer   | CIFAR10   | VGG16 özellikleri + KNN / Random Forest (isteğe bağlı) |
+| 5        | `CIFAR10_VGG16`           | CIFAR10   | VGG16 özellikleri  |
 
 ---
 
