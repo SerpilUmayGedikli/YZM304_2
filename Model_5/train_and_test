@@ -1,0 +1,16 @@
+class CIFAR10_VGG16_Full(nn.Module):
+    def __init__(self):
+        super(CIFAR10_VGG16_Full, self).__init__()
+        self.vgg = models.vgg16(pretrained=True)
+        self.vgg.classifier[6] = nn.Linear(4096, 10)
+
+    def forward(self, x):
+        return self.vgg(x)
+
+model = CIFAR10_VGG16_Full().to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
+
+# Eğitim fonksiyonu ve test aynı kalabilir
+train_model(model, epochs=5)
+test_model(model)
