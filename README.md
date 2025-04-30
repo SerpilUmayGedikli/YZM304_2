@@ -1,9 +1,27 @@
 # YZM304 2. Ödev - Derin Öğrenme ile Görüntü Sınıflandırma: CNN ve Hibrit Yöntem Karşılaştırması
 
-
 ## Giriş
 
-Görüntü sınıflandırma, bilgisayarla görme alanının temel problemlerinden biridir. Derin öğrenmenin gelişmesiyle birlikte evrişimli sinir ağları (CNN) bu alanda yüksek başarılar göstermiştir. Bu çalışmada, MNIST ve CIFAR-10 veri setleri üzerinde klasik CNN mimarileri ile hibrit bir yöntemin (özellik çıkarımı + geleneksel makine öğrenmesi) karşılaştırması yapılmıştır. Amaç, farklı mimarilerin doğruluk, hata, eğitim süresi gibi kriterler açısından karşılaştırmalı analizini sunmaktır.
+Görüntü sınıflandırma, bilgisayarla görme alanının temel problemlerinden biridir. Derin öğrenmenin gelişmesiyle birlikte evrişimli sinir ağları (CNN) bu alanda yüksek başarılar göstermiştir. Bu çalışmada, **MNIST** ve **CIFAR10** veri setleri üzerinde klasik CNN mimarileri ile hibrit bir yöntemin (özellik çıkarımı + geleneksel makine öğrenmesi) karşılaştırması yapılmıştır. Amaç, farklı mimarilerin doğruluk, hata, eğitim süresi gibi kriterler açısından karşılaştırmalı analizini sunmaktır.
+
+---
+
+## Klasör Yapısı ve Açıklamaları
+
+| Klasör/Dosya Adı             | Açıklama |
+|-----------------------------|----------|
+| `LeNet5`                    | MNIST veri seti için klasik LeNet-5 CNN mimarisi |
+| `ImprovedLeNet5`            | Batch Normalization ve Dropout içeren geliştirilmiş LeNet-5 modeli |
+| `LeNet5_train_test`         | LeNet5 eğitimi ve testi için ana betik |
+| `ImprovedLeNet5_epoch`      | Geliştirilmiş LeNet5 modeli için epoch bazlı doğruluk/kayıp görselleştirme |
+| `mnist_loader_and_plot`     | MNIST veri yükleme ve sonuç görselleştirme araçları |
+| `CIFAR10_train`             | CIFAR10 için model eğitimi (özellikle VGG16 temelli) |
+| `CIFAR10_test`              | CIFAR10 veri seti üzerinde test işlemi |
+| `CIFAR10`                   | CIFAR10 veri ön işleme ve temel işlemler |
+| `CIFAR10_VGG16`             | Transfer learning kullanarak eğitilen VGG16 modeli (özellik çıkarımı için) |
+| `CIFAR10_VGG16_Full`        | Uçtan uca tamamen eğitilen VGG16 CNN modeli |
+| `extract_features`          | VGG16'nin `avgpool` katmanından özellik çıkarımı işlemleri |
+| `SVM`                       | Hibrit model için SVM sınıflandırıcısının uygulanması |
 
 ---
 
@@ -12,74 +30,59 @@ Görüntü sınıflandırma, bilgisayarla görme alanının temel problemlerinde
 ### Veri Setleri
 
 - **MNIST:** 28x28 gri tonlamalı el yazısı rakamlar (0-9)
-- **CIFAR-10:** 32x32 renkli görüntüler, 10 sınıf (uçak, araba, kuş, kedi, vs.)
+- **CIFAR10:** 32x32 renkli görüntülerden oluşan 10 sınıf (uçak, araba, kuş, kedi, vs.)
 
 ### Kullanılan Modeller
 
-| Model No | Model Adı                     | Açıklama |
-|----------|-------------------------------|----------|
-| 1        | LeNet-5 (MNIST)               | Klasik CNN, 2 konvolüsyon + 3 tam bağlı katman |
-| 2        | Geliştirilmiş LeNet (MNIST)   | Batch Normalization ve Dropout içeren CNN |
-| 3        | VGG16 (CIFAR-10)              | Transfer learning, son katman CIFAR-10’a göre düzenlendi |
-| 4        | Hibrit Model (CIFAR-10)       | VGG16 ile çıkarılan özellikler → SVM |
-| 5        | Tam CNN (CIFAR-10)            | VGG16 modeli tam uçtan uca eğitildi |
-
-### Hibrit Yöntem (Model 4)
-
-1. CIFAR-10 veri seti, VGG16 modeline giriş olarak verildi.
-2. `avgpool` katmanından özellikler çıkarıldı.
-3. Bu vektörler `.npy` dosyaları olarak kaydedildi.
-4. SVM, KNN ve Random Forest gibi modellerle sınıflandırma yapıldı.
-
-### Performans Metodolojisi
-
-- Tüm modeller için `accuracy`, `confusion matrix`, `loss/accuracy grafikleri` hesaplandı.
-- Eğitim sonrası test doğrulukları kaydedildi.
-- Eğitimler `Adam` optimizer ile 10 epoch boyunca yapılmıştır.
-- Cross entropy loss fonksiyonu kullanılmıştır.
+| Model No | Model Adı                 | Veri Seti | Açıklama |
+|----------|---------------------------|-----------|----------|
+| 1        | `LeNet5`                  | MNIST     | Klasik CNN: 2 konvolüsyon + 3 tam bağlı katman |
+| 2        | `ImprovedLeNet5`          | MNIST     | Batch Normalization ve Dropout içeren CNN |
+| 3        | `CIFAR10_VGG16_Full`      | CIFAR10   | Transfer learning ile uçtan uca eğitilen VGG16 |
+| 4        | `CIFAR10_VGG16` + `SVM`   | CIFAR10   | VGG16 ile çıkarılan özelliklerle SVM sınıflandırma |
+| 5        | `CIFAR10_VGG16` + diğer   | CIFAR10   | VGG16 özellikleri + KNN / Random Forest (isteğe bağlı) |
 
 ---
 
-## Sonuçlar
+## Hibrit Yöntem (Model 4)
+
+1. `CIFAR10_VGG16` ile VGG16 modeline CIFAR10 görüntüleri verildi.
+2. `extract_features` betiği ile `avgpool` katmanından vektör çıkarımı yapıldı.
+3. Bu vektörler `.npy` dosyalarına kaydedildi.
+4. `SVM` klasörü içinde yer alan kodlar ile sınıflandırma gerçekleştirildi.
+
+---
+
+## Performans Değerlendirme
+
+- `accuracy`, `confusion matrix`, `loss/accuracy` grafik çıktıları her model için kaydedildi.
+- Tüm modeller `Adam` optimizer ve `CrossEntropyLoss` ile eğitildi (10 epoch).
+- `ImprovedLeNet5_epoch` ve `mnist_loader_and_plot` dosyaları eğitim süreci görselleştirmeleri içindir.
 
 ### Doğruluk Değerleri
 
-| Model                  | Veri Seti | Test Doğruluğu (%) |
-|------------------------|-----------|---------------------|
-| LeNet-5                | MNIST     | 98.10               |
-| Geliştirilmiş LeNet    | MNIST     | 98.87               |
-| VGG16 (Tam CNN)        | CIFAR-10  | 86.45               |
-| Hibrit (VGG16 + SVM)   | CIFAR-10  | 83.27               |
-
-### Karmaşıklık Matrisi (Confusion Matrix)
-
-Hibrit Model (CIFAR-10) – SVM sınıflandırıcı için:
-
-[[98 0 0 ...]
- [ 0 97 1 ...]
- ...
-
-### Kayıp (Loss) ve Doğruluk (Accuracy) Grafikleri
-
-> Eğitim süresince loss ve accuracy değerleri matplotlib ile görselleştirilmiştir. (Ekteki grafikler GitHub deposundadır.)
+| Model                  | Test Doğruluğu (%) |
+|------------------------|--------------------|
+| LeNet5                 | 98.10              |
+| ImprovedLeNet5         | 98.87              |
+| CIFAR10_VGG16_Full     | 86.45              |
+| CIFAR10_VGG16 + SVM    | 83.27              |
 
 ---
 
 ## Tartışma
 
-Sonuçlar göstermektedir ki klasik CNN mimarileri MNIST veri seti üzerinde oldukça yüksek doğruluklara ulaşabilmektedir. Geliştirilmiş LeNet-5 modeli, Batch Normalization ve Dropout katmanları sayesinde daha stabil ve yüksek başarımlı hale gelmiştir.  
-CIFAR-10 veri seti üzerinde VGG16 tabanlı tam CNN modeli, hibrit yaklaşıma kıyasla daha yüksek doğruluk sağlamıştır. Ancak hibrit model, geleneksel makine öğrenmesi algoritmaları ile de başarılı sonuçlar vermiştir. Bu durum, büyük modellerin eğitim süresi ve kaynak gereksiniminden kaçınılması gereken durumlarda hibrit yöntemlerin uygun bir alternatif olabileceğini göstermektedir.
+Sonuçlar, klasik CNN mimarilerinin MNIST gibi sade veri setlerinde çok yüksek başarı sağladığını göstermektedir. Geliştirilmiş LeNet5 modeli, Batch Normalization ve Dropout kullanımı ile daha stabil ve başarılı bir model olmuştur.  
+CIFAR10 gibi daha karmaşık veri setlerinde, uçtan uca eğitilen VGG16 modeli hibrit modele göre daha yüksek doğruluk vermiştir. Ancak hibrit model, geleneksel yöntemlerle de iyi sonuçlar elde ederek düşük kaynak ihtiyacı olan sistemlerde avantajlı hale gelmektedir.
 
-> Not: Eğitim süresi, bellek kullanımı gibi kriterlerde hibrit model daha avantajlı olmuştur. Ancak tam CNN modelleri genellikle doğruluk açısından üstünlük göstermiştir.
+> Eğitim süresi ve kaynak kullanımı açısından hibrit model oldukça verimlidir. Ancak doğruluk açısından tam eğitilmiş CNN'ler genel olarak daha üstündür.
 
 ---
 
 ## Referanslar
 
-1. LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998). Gradient-based learning applied to document recognition. *Proceedings of the IEEE*.
-2. Krizhevsky, A. (2009). Learning Multiple Layers of Features from Tiny Images (CIFAR-10 dataset).
-3. Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. *arXiv preprint arXiv:1409.1556*.
-4. PyTorch Resmi Belgeleri: https://pytorch.org/docs/stable/index.html
-5. Scikit-learn Documentation: https://scikit-learn.org/stable/
-
----
+1. LeCun, Y., et al. (1998). *Gradient-based learning applied to document recognition*, Proceedings of the IEEE.
+2. Krizhevsky, A. (2009). *Learning Multiple Layers of Features from Tiny Images*.
+3. Simonyan, K., & Zisserman, A. (2014). *Very deep convolutional networks for large-scale image recognition*. arXiv:1409.1556.
+4. [PyTorch Belgeleri](https://pytorch.org/docs/stable/)
+5. [Scikit-learn Belgeleri](https://scikit-learn.org/stable/)
