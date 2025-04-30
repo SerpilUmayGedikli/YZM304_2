@@ -1,0 +1,74 @@
+import torch
+import torchvision
+import torchvision.transforms as transforms
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import models
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+transform = transforms.Compose([
+    transforms.Resize(224),  # AlexNet için gerekli
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  
+])
+
+trainset_cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                              download=True, transform=transform)
+train_loader_cifar = torch.utils.data.DataLoader(trainset_cifar, batch_size=64,
+                                                 shuffle=True, num_workers=2)
+
+testset_cifar = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                             download=True, transform=transform)
+test_loader_cifar = torch.utils.data.DataLoader(testset_cifar, batch_size=64,
+                                                shuffle=False, num_workers=2)
+
+
+alexnet = models.alexnet(pretrained=True)
+
+
+alexnet.classifier[6] = nn.Linear(4096, 10)  # CIFAR-10 = 10 sınıf
+alexnet = alexnet.to(device)
+
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(alexnet.parameters(), lr=0.0001)
+
+
+def train(model, loader, criterion, optimizer, epoch):
+    model.train()
+    running_loss = 0.0
+    for i, (inputs, labels) in enumerate(loader, 0):
+        inputs, labels = inputs.to(device), labels.to(device)
+        optimizer.zero_grad()
+
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+        if i % 100 == 99:  # her 100 mini-batch'te bir çıktı
+            print(f"[{epoch + 1}, {i + 1}] loss: {running_loss / 100:.3f}")
+            running_loss = 0.0
+
+def test(model, loader):
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data in loader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f"Test Accuracy: {100 * correct / total:.2f}%")
+
+
+for epoch in range(5):  # epoch sayısını artırabilirsin
+    train(alexnet, train_loader_cifar, criterion, optimizer, epoch)
+    test(alexnet, test_loader_cifar)
