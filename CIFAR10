@@ -1,0 +1,32 @@
+import torch
+import torchvision
+import torchvision.transforms as transforms
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import models
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+transform = transforms.Compose([
+    transforms.Resize(224), 
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) 
+])
+
+trainset_cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                              download=True, transform=transform)
+train_loader_cifar = torch.utils.data.DataLoader(trainset_cifar, batch_size=64,
+                                                 shuffle=True, num_workers=2)
+
+testset_cifar = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                             download=True, transform=transform)
+test_loader_cifar = torch.utils.data.DataLoader(testset_cifar, batch_size=64,
+                                                shuffle=False, num_workers=2)
+
+alexnet = models.alexnet(pretrained=True)
+
+alexnet.classifier[6] = nn.Linear(4096, 10)  # CIFAR-10 = 10 sınıf
+alexnet = alexnet.to(device)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(alexnet.parameters(), lr=0.0001)
