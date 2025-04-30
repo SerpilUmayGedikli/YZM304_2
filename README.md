@@ -59,6 +59,9 @@ Bunun dışında, modelin doğruluk oranını etkileyen başka faktörler de mev
 ## Referanslar
 
 -LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998). Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11), 2278-2324.
+
 -He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep residual learning for image recognition. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 770-778.
+
 -Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). ImageNet classification with deep convolutional neural networks. Advances in Neural Information Processing Systems, 1097-1105.
+
 -PyTorch Contributors. (2021). PyTorch: An open-source machine learning library. https://pytorch.org
