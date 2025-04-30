@@ -1,0 +1,8 @@
+improved_model = ImprovedLeNet5().to(device)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(improved_model.parameters(), lr=0.001)
+
+for epoch in range(5):
+    train(improved_model, train_loader, criterion, optimizer, epoch)
+    test(improved_model, test_loader)
